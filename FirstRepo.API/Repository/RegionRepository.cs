@@ -12,6 +12,28 @@ namespace FirstRepo.API.Repository
         {
             this.firstRepoDbContext = firstRepoDbContext;
         }
+
+        public async Task<Region> AddRegionAsync(Region region)
+        {
+            region.id = Guid.NewGuid();
+            await firstRepoDbContext.AddAsync(region);
+            await firstRepoDbContext.SaveChangesAsync();
+            return region;
+        }
+
+        public async Task<Region> DeleteRegionAsync(Guid id)
+        {
+            var region = await firstRepoDbContext.Regions.FirstOrDefaultAsync(x => x.id == id);
+            if (region == null)
+            {
+                return null;
+            }
+            // Delete the region
+            firstRepoDbContext.Regions.Remove(region);
+           await firstRepoDbContext.SaveChangesAsync();
+            return region;
+        }
+
         public async Task<IEnumerable<Region>> GetAllAsync()
         {
           return await firstRepoDbContext.Regions.ToListAsync();
@@ -21,6 +43,25 @@ namespace FirstRepo.API.Repository
         {
           return await firstRepoDbContext.Regions.FirstOrDefaultAsync(x => x.id == id);
             
+        }
+
+        public async Task<Region> UpdateRegionAsync(Guid id, Region region)
+        {
+           var existingRegion = await firstRepoDbContext.Regions.FirstOrDefaultAsync(x => x.id == id);
+
+            if (existingRegion == null)
+            {
+                return null;
+            }
+            existingRegion.Code = region.Code;
+            existingRegion.Name = region.Name;
+            existingRegion.Area = region.Area;
+            existingRegion.Lat = region.Lat;
+            existingRegion.Long = region.Long;
+            existingRegion.Population = region.Population;
+
+           await firstRepoDbContext.SaveChangesAsync();
+            return existingRegion;
         }
     }
 }
