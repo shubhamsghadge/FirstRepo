@@ -5,5 +5,6 @@ namespace FirstRepo.API.Repository
     public interface IRegionRepository
     {
        Task <IEnumerable<Region>> GetAllAsync();
+       Task<Region> GetRegionByIDAsync(Guid id); 
     }
 }
