@@ -3,6 +3,8 @@ using FirstRepo.API.Models.Domain;
 using FirstRepo.API.Models.DTO;
 using FirstRepo.API.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
+using System.Xml.Linq;
 
 namespace FirstRepo.API.Controllers
 {
@@ -91,6 +93,57 @@ namespace FirstRepo.API.Controllers
             var regionmap = mapper.Map<List<Models.DTO.RegionResponse>>(get);
             return Ok(regionmap);
         }
-      
+
+
+        // GetRegionByID From  Database 
+        [HttpGet("GetRegionByID ")]
+        public async Task<IActionResult> GetRegionByID(Guid id)
+        {
+            var get =await regionRepository.GetRegionByIDAsync(id);
+            if(get == null)
+            {
+                return NotFound();
+            }
+            return Ok(get);
+        }
+
+        // GetRegionByID From  Automapper
+        [HttpGet("GetRegionByID Automapper")]
+        public async Task<IActionResult> GetRegionByIDMapper(Guid id)
+        {
+            var get = await regionRepository.GetRegionByIDAsync(id);
+            if (get == null)
+            {
+                return NotFound("ID Not Found");
+            }
+            var regionDTO = mapper.Map<Models.DTO.RegionResponse>(get);
+            return Ok(regionDTO);
+        }
+
+        // GetRegionByID From  DTO
+        [HttpGet("GetRegionByID DTO")]
+        public async Task<IActionResult> GetRegionByIdDTO(Guid id)
+        {
+            var get1 = await regionRepository.GetRegionByIDAsync(id);
+            if (get1 == null)
+            {
+                return NotFound();
+            }
+            var regionDTO = new RegionResponse();
+            {
+                if (get1 != null)
+                {
+                   regionDTO.id = get1.id;
+                    regionDTO.Code = get1.Code;
+                    regionDTO.Area = get1.Area;
+                    regionDTO.Name = get1.Name;
+                    regionDTO.Lat = get1.Lat;
+                    regionDTO.Long = get1.Long;
+                    regionDTO.Population = get1.Population;
+                }
+            }
+           
+            return Ok(regionDTO);
+        }
     }
 }

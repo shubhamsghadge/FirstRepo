@@ -16,5 +16,11 @@ namespace FirstRepo.API.Repository
         {
           return await firstRepoDbContext.Regions.ToListAsync();
         }
+
+        public async Task<Region> GetRegionByIDAsync(Guid id)
+        {
+          return await firstRepoDbContext.Regions.FirstOrDefaultAsync(x => x.id == id);
+            
+        }
     }
 }
