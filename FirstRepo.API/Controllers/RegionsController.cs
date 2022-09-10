@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FirstRepo.API.Data;
 using FirstRepo.API.Models.Domain;
 using FirstRepo.API.Models.DTO;
 using FirstRepo.API.Repository;
@@ -144,6 +145,115 @@ namespace FirstRepo.API.Controllers
             }
            
             return Ok(regionDTO);
+        }
+
+
+
+        // Add New Region 
+        [HttpPost]
+        public async Task<IActionResult> AddRegion(AddRegionRequest addRegionRequest)
+        {
+            // Request(DTO) to Domain Model
+
+            var region = new Models.Domain.Region()
+            {
+                Code = addRegionRequest.Code,
+                Name = addRegionRequest.Name,
+                Area = addRegionRequest.Area,
+                Lat = addRegionRequest.Lat,
+                Long = addRegionRequest.Long,
+                Population = addRegionRequest.Population
+            };
+
+            // Pass Details to Repository
+
+           var add = await regionRepository.AddRegionAsync(region);
+
+            // Convert back to DTO
+
+            var regionDTO =  new Models.Domain.Region()
+            {
+                id = add.id,
+                Code = add.Code,
+                Name = add.Name,
+                Area = add.Area,
+                Lat = add.Lat,
+                Long = add.Long,
+                Population = add.Population
+            };
+            return CreatedAtAction(nameof(GetRegionByIDMapper), new { id = regionDTO.id }, regionDTO);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRegion(Guid id)
+        {
+            // Get Region From Database 
+            var delete = await regionRepository.DeleteRegionAsync(id);
+
+            // If do not get Region , => Not Found
+
+            if (delete == null)
+            {
+                return NotFound();
+            }
+            // If Find Region Response back to DTO
+
+            var regionDTO = new Region()
+            {
+                id = delete.id,
+                Code = delete.Code,
+                Name = delete.Name,
+                Area = delete.Area,
+                Lat = delete.Lat,
+                Long = delete.Long,
+                Population = delete.Population
+            };
+
+            // Return OK response
+            return Ok(regionDTO);
+        }
+
+
+        [HttpPut]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> UpdateRegion([FromRoute]Guid id ,[FromBody] AddRegionRequest addRegionRequest)
+        {
+            // Convert DTO to Domain Model
+            var region = new Models.Domain.Region()
+            {
+                Code = addRegionRequest.Code,
+                Name = addRegionRequest.Name,
+                Area = addRegionRequest.Area,
+                Lat = addRegionRequest.Lat,
+                Long = addRegionRequest.Long,
+                Population = addRegionRequest.Population
+            };
+
+            // Update using Repository
+
+           var update = await regionRepository.UpdateRegionAsync(id, region);
+
+            // if Null then Not Found 
+            if(update == null)
+            {
+                return NotFound();
+            }
+
+            // Convert back to DTO 
+            var regionDTO = new Region()
+            {
+                id = update.id,
+                Code = update.Code,
+                Name = update.Name,
+                Area = update.Area,
+                Lat = update.Lat,
+                Long = update.Long,
+                Population = update.Population
+            };
+
+            // Return Ok Response
+
+            return Ok(update);
         }
     }
 }
