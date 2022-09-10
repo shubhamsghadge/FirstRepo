@@ -12,11 +12,13 @@ namespace FirstRepo.API.Controllers
     {
         private IRegionRepository regionRepository;
         private IMapper mapper;
+       
 
-        public RegionsController(IRegionRepository regionRepository, IMapper mapper)
+        public RegionsController(IRegionRepository regionRepository, IMapper mapper )
         {
             this.regionRepository= regionRepository;
             this.mapper = mapper;
+            
         }
 
         public IRegionRepository RegionRepository { get; }
@@ -57,7 +59,8 @@ namespace FirstRepo.API.Controllers
             return Ok(get);
         }
 
-        [HttpGet("FromDTO")]
+        [HttpGet]
+     
         public async Task<IActionResult> GetRegionsFromDTO()
         {
             var get = await regionRepository.GetAllAsync();
@@ -88,5 +91,6 @@ namespace FirstRepo.API.Controllers
             var regionmap = mapper.Map<List<Models.DTO.RegionResponse>>(get);
             return Ok(regionmap);
         }
+      
     }
 }
